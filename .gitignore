@@ -8,6 +8,7 @@ src/groestlcoin-cli
 src/groestlcoin-gui
 src/groestlcoin-node
 src/groestlcoin-tx
+src/groestlcoin-util
 src/groestlcoin-wallet
 src/test/fuzz/*
 !src/test/fuzz/*.*

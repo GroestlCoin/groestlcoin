@@ -92,13 +92,19 @@ endif
 if BUILD_BITCOIN_CLI
   bin_PROGRAMS += groestlcoin-cli
 endif
+
 if BUILD_BITCOIN_TX
   bin_PROGRAMS += groestlcoin-tx
 endif
+
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
   bin_PROGRAMS += groestlcoin-wallet
 endif
+endif
+
+if BUILD_BITCOIN_UTIL
+  bin_PROGRAMS += groestlcoin-util
 endif
 
 .PHONY: FORCE check-symbols check-security
@@ -663,6 +669,27 @@ groestlcoin_wallet_LDADD = $(LIBBITCOIN_WALLET_TOOL) $(groestlcoin_bin_ldadd)
 if TARGET_WINDOWS
 groestlcoin_wallet_SOURCES += groestlcoin-wallet-res.rc
 endif
+#
+
+# groestlcoin-util binary #
+groestlcoin_util_SOURCES = groestlcoin-util.cpp
+groestlcoin_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+groestlcoin_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+groestlcoin_util_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+groestlcoin_util_SOURCES += groestlcoin-util-res.rc
+endif
+
+groestlcoin_util_LDADD = \
+  $(LIBUNIVALUE) \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_CONSENSUS) \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBSECP256K1)
+
+groestlcoin_util_LDADD += $(BOOST_LIBS)
 #
 
 # groestlcoinconsensus library #

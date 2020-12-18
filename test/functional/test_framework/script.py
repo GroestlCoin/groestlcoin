@@ -665,7 +665,7 @@ def LegacySignatureHash(script, txTo, inIdx, hashtype):
     s = txtmp.serialize_without_witness()
     s += struct.pack(b"<I", hashtype)
 
-    hash = hash256(s)
+    hash = sha256(s)
 
     return (hash, None)
 
@@ -683,22 +683,22 @@ def SegwitV0SignatureHash(script, txTo, inIdx, hashtype, amount):
         serialize_prevouts = bytes()
         for i in txTo.vin:
             serialize_prevouts += i.prevout.serialize()
-        hashPrevouts = uint256_from_str(hash256(serialize_prevouts))
+        hashPrevouts = uint256_from_str(sha256(serialize_prevouts))
 
     if (not (hashtype & SIGHASH_ANYONECANPAY) and (hashtype & 0x1f) != SIGHASH_SINGLE and (hashtype & 0x1f) != SIGHASH_NONE):
         serialize_sequence = bytes()
         for i in txTo.vin:
             serialize_sequence += struct.pack("<I", i.nSequence)
-        hashSequence = uint256_from_str(hash256(serialize_sequence))
+        hashSequence = uint256_from_str(sha256(serialize_sequence))
 
     if ((hashtype & 0x1f) != SIGHASH_SINGLE and (hashtype & 0x1f) != SIGHASH_NONE):
         serialize_outputs = bytes()
         for o in txTo.vout:
             serialize_outputs += o.serialize()
-        hashOutputs = uint256_from_str(hash256(serialize_outputs))
+        hashOutputs = uint256_from_str(sha256(serialize_outputs))
     elif ((hashtype & 0x1f) == SIGHASH_SINGLE and inIdx < len(txTo.vout)):
         serialize_outputs = txTo.vout[inIdx].serialize()
-        hashOutputs = uint256_from_str(hash256(serialize_outputs))
+        hashOutputs = uint256_from_str(sha256(serialize_outputs))
 
     ss = bytes()
     ss += struct.pack("<i", txTo.nVersion)
@@ -712,7 +712,7 @@ def SegwitV0SignatureHash(script, txTo, inIdx, hashtype, amount):
     ss += struct.pack("<i", txTo.nLockTime)
     ss += struct.pack("<I", hashtype)
 
-    return hash256(ss)
+    return sha256(ss)
 
 class TestFrameworkScript(unittest.TestCase):
     def test_bn2vch(self):

@@ -30,6 +30,7 @@ import time
 
 from test_framework.siphash import siphash256
 from test_framework.util import hex_str_to_bytes, assert_equal
+import groestlcoin_hash
 
 MIN_VERSION_SUPPORTED = 60001
 MY_VERSION = 70016  # past wtxid relay
@@ -76,6 +77,9 @@ def sha256(s):
 
 def hash256(s):
     return sha256(sha256(s))
+
+def groestl_hash(s):
+    return groestlcoin_hash.getHash(s, len(s))
 
 def ser_compact_size(l):
     r = b""
@@ -576,11 +580,11 @@ class CTransaction:
     def calc_sha256(self, with_witness=False):
         if with_witness:
             # Don't cache the result, just return it
-            return uint256_from_str(hash256(self.serialize_with_witness()))
+            return uint256_from_str(sha256(self.serialize_with_witness()))
 
         if self.sha256 is None:
-            self.sha256 = uint256_from_str(hash256(self.serialize_without_witness()))
-        self.hash = encode(hash256(self.serialize_without_witness())[::-1], 'hex_codec').decode('ascii')
+            self.sha256 = uint256_from_str(sha256(self.serialize_without_witness()))
+        self.hash = encode(sha256(self.serialize_without_witness())[::-1], 'hex_codec').decode('ascii')
 
     def is_valid(self):
         self.calc_sha256()
@@ -658,8 +662,8 @@ class CBlockHeader:
             r += struct.pack("<I", self.nTime)
             r += struct.pack("<I", self.nBits)
             r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(hash256(r))
-            self.hash = encode(hash256(r)[::-1], 'hex_codec').decode('ascii')
+            self.sha256 = uint256_from_str(groestl_hash(r))
+            self.hash = encode(groestl_hash(r)[::-1], 'hex_codec').decode('ascii')
 
     def rehash(self):
         self.sha256 = None

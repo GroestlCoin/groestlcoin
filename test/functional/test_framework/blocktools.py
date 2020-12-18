@@ -83,7 +83,7 @@ def create_block(hashprev=None, coinbase=None, ntime=None, *, version=None, tmpl
     return block
 
 def get_witness_script(witness_root, witness_nonce):
-    witness_commitment = uint256_from_str(hash256(ser_uint256(witness_root) + ser_uint256(witness_nonce)))
+    witness_commitment = uint256_from_str(sha256(ser_uint256(witness_root) + ser_uint256(witness_nonce)))
     output_data = WITNESS_COMMITMENT_HEADER + ser_uint256(witness_commitment)
     return CScript([OP_RETURN, output_data])
 

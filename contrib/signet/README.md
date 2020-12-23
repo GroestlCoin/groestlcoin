@@ -23,19 +23,19 @@ miner
 
 To mine the first block in your custom chain, you can run:
 
-  cd src/
-  CLI="./groestlcoin-cli -conf=mysignet.conf"
-  MINER="..contrib/signet/miner"
-  GRIND="./groestlcoin-util grind"
-  ADDR=$($CLI -signet getnewaddress)
-  $MINER --cli="$CLI" generate --grind-cmd="$GRIND" --address="$ADDR" --set-block-time=-1
+  cd src/    
+  CLI="./groestlcoin-cli -conf=mysignet.conf"    
+  MINER="..contrib/signet/miner"    
+  GRIND="./groestlcoin-util grind"    
+  ADDR=$($CLI -signet getnewaddress)    
+  $MINER --cli="$CLI" generate --grind-cmd="$GRIND" --address="$ADDR" --set-block-time=-1    
 
 This will mine a block with the current timestamp. If you want to backdate the chain, you can give a different timestamp to --set-block-time.
 
 You will then need to pick a difficulty target. Since signet chains are primarily protected by a signature rather than proof of work, there is no need to spend as much energy as possible mining, however you may wish to choose to spend more time than the absolute minimum. The calibrate subcommand can be used to pick a target, eg:
 
-  $MINER calibrate --grind-cmd="$GRIND"
-  nbits=1e00f403 for 25s average mining time
+  $MINER calibrate --grind-cmd="$GRIND"    
+  nbits=1e00f403 for 25s average mining time    
 
 It defaults to estimating an nbits value resulting in 25s average time to find a block, but the --seconds parameter can be used to pick a different target, or the --nbits parameter can be used to estimate how long it will take for a given difficulty.
 
@@ -69,11 +69,11 @@ The process generate uses is to generate a block template, convert that into a P
 
 These steps can instead be done explicitly:
 
-  $CLI -signet getblocktemplate '{"rules": ["signet","segwit"]}' |
-    $MINER --cli="$CLI" genpsbt --address="$ADDR" |
-    $CLI -signet -stdin walletprocesspsbt |
-    jq -r .psbt |
-    $MINER --cli="$CLI" solvepsbt --grind-cmd="$GRIND" |
-    $CLI -signet -stdin submitblock
+  $CLI -signet getblocktemplate '{"rules": ["signet","segwit"]}' |    
+    $MINER --cli="$CLI" genpsbt --address="$ADDR" |    
+    $CLI -signet -stdin walletprocesspsbt |    
+    jq -r .psbt |    
+    $MINER --cli="$CLI" solvepsbt --grind-cmd="$GRIND" |    
+    $CLI -signet -stdin submitblock    
 
 This is intended to allow you to replace part of the pipeline for further experimentation, if desired.

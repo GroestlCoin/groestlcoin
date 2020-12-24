@@ -23,6 +23,7 @@ miner
 
 To mine the first block in your custom chain, you can run:
 
+  pip3 install groestlcoin_hash
   cd src/    
   CLI="./groestlcoin-cli"    
   MINER="../contrib/signet/miner"    
